@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_38a8fdcb7a5c1c2fbc316cd7c83a9c4d {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+    <script src="https://cdn.jsdelivr.net/gh/python-visualization/folium@main/folium/templates/leaflet_heat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css"/>
+</head>
+<body>
+    
+    
+     <div style="width: 100%; background-color: #3f88c5; padding: 10px; text-align: center; border-bottom: 2px solid #cccccc;">
+         <h3 style="font-size: 24px; margin: 0;"><b>Wave Energy and Biodiversity in Nova Scotia</b></h3>
+         <p style="font-size: 14px; margin: 0; color: #555555;">
+         This map integrates wave energy potential and species biodiversity for marine analysis.<br>
+         Red and orange markers indicate high energy zones; green and blue are lower energy zones.
+         </p>
+     </div>
+     
+    
+     <div style="position: fixed; 
+                 bottom: 50px; left: 50px; width: 280px; height: auto; 
+                 border:2px solid grey; z-index:9999; font-size:14px;
+                 background-color:white; opacity: 0.9; padding: 10px; line-height: 1.6;">
+     <b>Legend</b><br>
+     <span style="display: inline-block; width: 15px; height: 15px; background-color: red; margin-right: 5px;"></span> High Energy, Shallow Depth <br>
+     <span style="display: inline-block; width: 15px; height: 15px; background-color: orange; margin-right: 5px;"></span> High Energy, Deep Depth <br>
+     <span style="display: inline-block; width: 15px; height: 15px; background-color: green; margin-right: 5px;"></span> Low Energy, Shallow Depth <br>
+     <span style="display: inline-block; width: 15px; height: 15px; background-color: blue; margin-right: 5px;"></span> Low Energy, Deep Depth <br>
+     </div>
+     
+    
+     <div style="position: fixed; 
+                 bottom: 80px; right: 50px; width: 280px; height: auto; 
+                 border:2px solid grey; z-index:9999; font-size:14px;
+                 background-color:white; opacity: 0.9; padding: 10px; line-height: 1.6;">
+     <b>User Guide:</b><br>
+     - Hover over the markers for a quick overview.<br>
+     - Click on the markers to see detailed popups.<br>
+     - Use the heatmap to identify regions with high energy.<br>
+     </div>
+     
+    
+     <div style="position: fixed; 
+                 bottom: 10px; right: 50px; width: 280px; height: auto; 
+                 border:2px solid grey; z-index:9999; font-size:12px;
+                 background-color:white; opacity: 0.9; padding: 10px; line-height: 1.6;">
+     <b>Data Sources:</b><br>
+     Wave Data: <a href="https://data.novascotia.ca/Fishing-and-Aquaculture/Station-Location-Wave-Dataset/dhns-eqjr/about_data" target="_blank">Nova Scotia Open Data</a><br>
+     Biodiversity Data: <a href="https://obis.org" target="_blank">OBIS</a>
+     </div>
+     
+    
+            <div class="folium-map" id="map_38a8fdcb7a5c1c2fbc316cd7c83a9c4d" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_38a8fdcb7a5c1c2fbc316cd7c83a9c4d = L.map(
+                "map_38a8fdcb7a5c1c2fbc316cd7c83a9c4d",
+                {
+                    center: [44.65, -63.57],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 8,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+            L.control.scale().addTo(map_38a8fdcb7a5c1c2fbc316cd7c83a9c4d);
+
+            
+
+        
+    
+            var tile_layer_76e2dc5e8638bf514411465286a6b34e = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors", "detectRetina": false, "maxNativeZoom": 19, "maxZoom": 19, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            );
+        
+    
+            tile_layer_76e2dc5e8638bf514411465286a6b34e.addTo(map_38a8fdcb7a5c1c2fbc316cd7c83a9c4d);
+        
+    
+            var heat_map_69075096c753da575379f7c410a31cd6 = L.heatLayer(
+                [[44.6509, -65.66705, 345632.1464609256], [44.65652, -65.65323, 315632.7167425413], [44.261, -66.347, 103778.98814956802], [44.53358, -66.00035, 323303.03976238845], [44.41283, -66.14659, 629222.8289948398], [44.34975, -66.22617, 448632.388059633], [45.26823, -60.96719, 344700.808044267], [45.12923, -61.45403, 298915.55303445674], [45.52134, -61.25405, 137965.13975591166], [45.52248, -61.25238, 237146.11254368073], [45.10777, -61.6426, 396358.5989498796], [45.22525, -61.29836, 273776.0302813795], [45.390035, -61.136847, 436874.50783799775], [44.88962, -62.40395, 133791.60941590538], [44.7376, -62.8092, 196082.3968665023], [44.75179, -62.76327, 269934.8506678859], [44.54113, -63.96929, 390492.19677357515], [44.83698, -62.47765, 134723.25476510747], [44.8168, -62.6172, 138025.1735640307], [46.0002, -60.96485, 344817.6138758679], [45.97827, -61.0251, 584392.311891648], [45.97742, -61.03027, 139089.22285570065], [45.94661, -61.12931, 166814.90646686265], [44.51912, -64.16333, 97045.18480296673], [44.525425, -63.9981, 115702.49317700628], [43.94512, -64.76457, 584576.6891328509], [44.041, -64.6414, 310627.7116427093], [43.91594, -64.81122, 131502.87849967068], [43.88513, -64.77979, 220799.2946396782], [44.03825, -64.639367, 665301.3189475954], [45.66188, -60.8468, 153479.53170603837], [43.69695, -65.19517, 296708.75923709874], [43.73992, -65.32671, 394274.61698076443], [43.6407, -65.2654, 616091.7004020774], [43.6806, -65.2046, 81779.50703544352], [43.698722, -65.194333, 199822.37234483976], [46.2856, -60.5431, 286726.1982220939], [43.67469261, -65.82454, 287659.6468520285], [43.62969, -65.82394, 99120.02840655785], [43.70071, -65.83534, 501484.62236552977], [43.60661, -65.78314, 515098.98427923425], [43.68486, -65.83658, 196495.04111573278], [43.49633, -65.73766, 94303.02865648699], [43.46798, -65.73993, 137764.4909844372], [43.653275, -65.822797, 84109.14338409509]],
+                {"blur": 15, "maxZoom": 12, "minOpacity": 0.5, "radius": 15}
+            );
+        
+    
+            heat_map_69075096c753da575379f7c410a31cd6.addTo(map_38a8fdcb7a5c1c2fbc316cd7c83a9c4d);
+        
+    
+            var marker_cluster_69022e9cb687d472e76ef88d671731a1 = L.markerClusterGroup(
+                {}
+            );
+        
+    
+            var marker_51beb086bf778064b2fae8d2225e9614 = L.marker(
+                [44.6509, -65.66705],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_c0cdae3b5fe820d6e7ac6642da31d9ac = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_51beb086bf778064b2fae8d2225e9614.setIcon(icon_c0cdae3b5fe820d6e7ac6642da31d9ac);
+        
+    
+        var popup_af848a1472345c6d288c682c8b1b443f = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_602d17a7efdfc9ed62a95ce044ede9b1 = $(`<div id="html_602d17a7efdfc9ed62a95ce044ede9b1" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 345632.15 kW/m<br>     <b>Depth:</b> 12.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Annapolis<br>     <b>Waterbody:</b> Annapolis Basin<br>     <b>Station Name:</b> 1042 South     </div>`)[0];
+                popup_af848a1472345c6d288c682c8b1b443f.setContent(html_602d17a7efdfc9ed62a95ce044ede9b1);
+            
+        
+
+        marker_51beb086bf778064b2fae8d2225e9614.bindPopup(popup_af848a1472345c6d288c682c8b1b443f)
+        ;
+
+        
+    
+    
+            var marker_0657d24b26dd13cb0a3a8652f6338b86 = L.marker(
+                [44.65652, -65.65323],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_d1e7f6061096b1786838207dce603c7a = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_0657d24b26dd13cb0a3a8652f6338b86.setIcon(icon_d1e7f6061096b1786838207dce603c7a);
+        
+    
+        var popup_ef3b5e337f092c9a09a47b0e5d2a42ec = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_fa3344596b72069769d6fd016a36a7f6 = $(`<div id="html_fa3344596b72069769d6fd016a36a7f6" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 315632.72 kW/m<br>     <b>Depth:</b> 12.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Annapolis<br>     <b>Waterbody:</b> Annapolis Basin<br>     <b>Station Name:</b> 1042 North     </div>`)[0];
+                popup_ef3b5e337f092c9a09a47b0e5d2a42ec.setContent(html_fa3344596b72069769d6fd016a36a7f6);
+            
+        
+
+        marker_0657d24b26dd13cb0a3a8652f6338b86.bindPopup(popup_ef3b5e337f092c9a09a47b0e5d2a42ec)
+        ;
+
+        
+    
+    
+            var marker_ffb0454781b045b5621b66e62bc086af = L.marker(
+                [44.261, -66.347],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_e4c01a034451e27557239f4dc45799d3 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_ffb0454781b045b5621b66e62bc086af.setIcon(icon_e4c01a034451e27557239f4dc45799d3);
+        
+    
+        var popup_f19b890df00494d255dab1a5e9995323 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_4ae81f23e53ef7897084b7b03a4fece4 = $(`<div id="html_4ae81f23e53ef7897084b7b03a4fece4" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 103778.99 kW/m<br>     <b>Depth:</b> 12.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Digby<br>     <b>Waterbody:</b> Westport Harbour<br>     <b>Station Name:</b> Brier Island     </div>`)[0];
+                popup_f19b890df00494d255dab1a5e9995323.setContent(html_4ae81f23e53ef7897084b7b03a4fece4);
+            
+        
+
+        marker_ffb0454781b045b5621b66e62bc086af.bindPopup(popup_f19b890df00494d255dab1a5e9995323)
+        ;
+
+        
+    
+    
+            var marker_6614905f37cb0c1d1267ca79e6416d49 = L.marker(
+                [44.53358, -66.00035],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_3e8f48662cb1af3e213e8bc635beb804 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_6614905f37cb0c1d1267ca79e6416d49.setIcon(icon_3e8f48662cb1af3e213e8bc635beb804);
+        
+    
+        var popup_8a49843649d8d05e217e33d6e4ab4d31 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_d9fcf9e57058de4db179d44172456628 = $(`<div id="html_d9fcf9e57058de4db179d44172456628" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 323303.04 kW/m<br>     <b>Depth:</b> 10.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Digby<br>     <b>Waterbody:</b> St. Mary's Bay<br>     <b>Station Name:</b> Centerville     </div>`)[0];
+                popup_8a49843649d8d05e217e33d6e4ab4d31.setContent(html_d9fcf9e57058de4db179d44172456628);
+            
+        
+
+        marker_6614905f37cb0c1d1267ca79e6416d49.bindPopup(popup_8a49843649d8d05e217e33d6e4ab4d31)
+        ;
+
+        
+    
+    
+            var marker_4027f6cb69591b17291d3b98cb10995c = L.marker(
+                [44.41283, -66.14659],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_7ea9d4031d02a337468e49b84b436742 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "orange", "prefix": "glyphicon"}
+            );
+            marker_4027f6cb69591b17291d3b98cb10995c.setIcon(icon_7ea9d4031d02a337468e49b84b436742);
+        
+    
+        var popup_a12e9c34bcc5fbecbfbf9e2628718266 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_b5f1484c7e509522b5b2e933929c3cad = $(`<div id="html_b5f1484c7e509522b5b2e933929c3cad" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> High Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 629222.83 kW/m<br>     <b>Depth:</b> 29.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Digby<br>     <b>Waterbody:</b> St. Mary's Bay<br>     <b>Station Name:</b> Long Beach     </div>`)[0];
+                popup_a12e9c34bcc5fbecbfbf9e2628718266.setContent(html_b5f1484c7e509522b5b2e933929c3cad);
+            
+        
+
+        marker_4027f6cb69591b17291d3b98cb10995c.bindPopup(popup_a12e9c34bcc5fbecbfbf9e2628718266)
+        ;
+
+        
+    
+    
+            var marker_b2293ddbb656a1b15c0eafdc84c712b4 = L.marker(
+                [44.34975, -66.22617],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_e48a3829b798be1bf327b6c1b9eb8957 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "orange", "prefix": "glyphicon"}
+            );
+            marker_b2293ddbb656a1b15c0eafdc84c712b4.setIcon(icon_e48a3829b798be1bf327b6c1b9eb8957);
+        
+    
+        var popup_98e0f28ce36db997765febff546df6ee = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_8b81772e04cb01bfc64f2312ac741ad7 = $(`<div id="html_8b81772e04cb01bfc64f2312ac741ad7" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> High Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 448632.39 kW/m<br>     <b>Depth:</b> 31.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Digby<br>     <b>Waterbody:</b> St. Mary's Bay<br>     <b>Station Name:</b> Long Island     </div>`)[0];
+                popup_98e0f28ce36db997765febff546df6ee.setContent(html_8b81772e04cb01bfc64f2312ac741ad7);
+            
+        
+
+        marker_b2293ddbb656a1b15c0eafdc84c712b4.bindPopup(popup_98e0f28ce36db997765febff546df6ee)
+        ;
+
+        
+    
+    
+            var marker_95faca53b303d6bf8d1bb6c227a315f4 = L.marker(
+                [45.26823, -60.96719],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_7f7a8822586925a8b71760a95f2216e7 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_95faca53b303d6bf8d1bb6c227a315f4.setIcon(icon_7f7a8822586925a8b71760a95f2216e7);
+        
+    
+        var popup_3266cfde8a77a2afd967e327145cfafe = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_a4cd272bdc893b27eb91a5fa4e633537 = $(`<div id="html_a4cd272bdc893b27eb91a5fa4e633537" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 344700.81 kW/m<br>     <b>Depth:</b> 21.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Guysborough<br>     <b>Waterbody:</b> Dover Bay<br>     <b>Station Name:</b> Black Island     </div>`)[0];
+                popup_3266cfde8a77a2afd967e327145cfafe.setContent(html_a4cd272bdc893b27eb91a5fa4e633537);
+            
+        
+
+        marker_95faca53b303d6bf8d1bb6c227a315f4.bindPopup(popup_3266cfde8a77a2afd967e327145cfafe)
+        ;
+
+        
+    
+    
+            var marker_a678b4c75759873e4f78f2166ef8786c = L.marker(
+                [45.12923, -61.45403],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_04ad476393dd4be4bb37b10151d5f3fd = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_a678b4c75759873e4f78f2166ef8786c.setIcon(icon_04ad476393dd4be4bb37b10151d5f3fd);
+        
+    
+        var popup_bf86843092abb58db9fc0ce30d63a9fb = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_390b5f527fd4da4b5849edcda58a594d = $(`<div id="html_390b5f527fd4da4b5849edcda58a594d" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 298915.55 kW/m<br>     <b>Depth:</b> 27.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Guysborough<br>     <b>Waterbody:</b> New Harbour<br>     <b>Station Name:</b> Brandy Ledge     </div>`)[0];
+                popup_bf86843092abb58db9fc0ce30d63a9fb.setContent(html_390b5f527fd4da4b5849edcda58a594d);
+            
+        
+
+        marker_a678b4c75759873e4f78f2166ef8786c.bindPopup(popup_bf86843092abb58db9fc0ce30d63a9fb)
+        ;
+
+        
+    
+    
+            var marker_763cb1c1c578b2cc0e4ec23a5f467b3e = L.marker(
+                [45.52134, -61.25405],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_4314e4c5091ad0e254003e8a8cc1081a = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_763cb1c1c578b2cc0e4ec23a5f467b3e.setIcon(icon_4314e4c5091ad0e254003e8a8cc1081a);
+        
+    
+        var popup_2418cc6a5477206a4cde5c6e3a34cef7 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_f08e2b9fad0b098c428244b4e1d27eec = $(`<div id="html_f08e2b9fad0b098c428244b4e1d27eec" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 137965.14 kW/m<br>     <b>Depth:</b> nan m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Guysborough<br>     <b>Waterbody:</b> Strait of Canso<br>     <b>Station Name:</b> Eddy Cove Centre     </div>`)[0];
+                popup_2418cc6a5477206a4cde5c6e3a34cef7.setContent(html_f08e2b9fad0b098c428244b4e1d27eec);
+            
+        
+
+        marker_763cb1c1c578b2cc0e4ec23a5f467b3e.bindPopup(popup_2418cc6a5477206a4cde5c6e3a34cef7)
+        ;
+
+        
+    
+    
+            var marker_b06e8b4f8e23e76c17fac0c322b2da54 = L.marker(
+                [45.52248, -61.25238],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_df32f99ad3a7e4971f4736dc53f13d78 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_b06e8b4f8e23e76c17fac0c322b2da54.setIcon(icon_df32f99ad3a7e4971f4736dc53f13d78);
+        
+    
+        var popup_e1cdb8fb1dfaef4986df8b3a369f470e = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_b4ad9adfa5bbd1d4a5303a7f84ef0215 = $(`<div id="html_b4ad9adfa5bbd1d4a5303a7f84ef0215" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 237146.11 kW/m<br>     <b>Depth:</b> nan m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Guysborough<br>     <b>Waterbody:</b> Strait of Canso<br>     <b>Station Name:</b> Eddy Cove Northeast     </div>`)[0];
+                popup_e1cdb8fb1dfaef4986df8b3a369f470e.setContent(html_b4ad9adfa5bbd1d4a5303a7f84ef0215);
+            
+        
+
+        marker_b06e8b4f8e23e76c17fac0c322b2da54.bindPopup(popup_e1cdb8fb1dfaef4986df8b3a369f470e)
+        ;
+
+        
+    
+    
+            var marker_0f28682ca62dddeb20d999b1a0c23af1 = L.marker(
+                [45.10777, -61.6426],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_79fbc5e70c969ef3e7fa9678772f38af = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "orange", "prefix": "glyphicon"}
+            );
+            marker_0f28682ca62dddeb20d999b1a0c23af1.setIcon(icon_79fbc5e70c969ef3e7fa9678772f38af);
+        
+    
+        var popup_9a9f2142729c7d8b35505f724ad5c6c6 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_29e760c65cbff7091be6f596e43fac00 = $(`<div id="html_29e760c65cbff7091be6f596e43fac00" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> High Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 396358.60 kW/m<br>     <b>Depth:</b> 31.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Guysborough<br>     <b>Waterbody:</b> Fishermans Harbour<br>     <b>Station Name:</b> Meal Rock     </div>`)[0];
+                popup_9a9f2142729c7d8b35505f724ad5c6c6.setContent(html_29e760c65cbff7091be6f596e43fac00);
+            
+        
+
+        marker_0f28682ca62dddeb20d999b1a0c23af1.bindPopup(popup_9a9f2142729c7d8b35505f724ad5c6c6)
+        ;
+
+        
+    
+    
+            var marker_44a7134e645405cb9b9557e6f9bc3e4f = L.marker(
+                [45.22525, -61.29836],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_f48506ed12fdcc0278f283441aa01dea = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_44a7134e645405cb9b9557e6f9bc3e4f.setIcon(icon_f48506ed12fdcc0278f283441aa01dea);
+        
+    
+        var popup_d597e0f90536c218b1eb7bc6921e0a17 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_7deff9a5b302517f905f7ab5c53a31d1 = $(`<div id="html_7deff9a5b302517f905f7ab5c53a31d1" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 273776.03 kW/m<br>     <b>Depth:</b> 21.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Guysborough<br>     <b>Waterbody:</b> Tor Bay<br>     <b>Station Name:</b> Centre Bay     </div>`)[0];
+                popup_d597e0f90536c218b1eb7bc6921e0a17.setContent(html_7deff9a5b302517f905f7ab5c53a31d1);
+            
+        
+
+        marker_44a7134e645405cb9b9557e6f9bc3e4f.bindPopup(popup_d597e0f90536c218b1eb7bc6921e0a17)
+        ;
+
+        
+    
+    
+            var marker_cc90da125877461f575daa59be541fcf = L.marker(
+                [45.390035, -61.136847],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_041a002de34b74115e66f3bc0d882dcc = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "orange", "prefix": "glyphicon"}
+            );
+            marker_cc90da125877461f575daa59be541fcf.setIcon(icon_041a002de34b74115e66f3bc0d882dcc);
+        
+    
+        var popup_b66b3ea386c1b896d9a403756380919e = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_c72aae33c4beba6211d6ea1a62938a84 = $(`<div id="html_c72aae33c4beba6211d6ea1a62938a84" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> High Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 436874.51 kW/m<br>     <b>Depth:</b> nan m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Guysborough<br>     <b>Waterbody:</b> Chedabucto Bay<br>     <b>Station Name:</b> Chedabucto Bay     </div>`)[0];
+                popup_b66b3ea386c1b896d9a403756380919e.setContent(html_c72aae33c4beba6211d6ea1a62938a84);
+            
+        
+
+        marker_cc90da125877461f575daa59be541fcf.bindPopup(popup_b66b3ea386c1b896d9a403756380919e)
+        ;
+
+        
+    
+    
+            var marker_6c3fc17e469f279fd44eba09d1378150 = L.marker(
+                [44.88962, -62.40395],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_2823f2d5b3d94d16b6ae437d4323ae7f = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_6c3fc17e469f279fd44eba09d1378150.setIcon(icon_2823f2d5b3d94d16b6ae437d4323ae7f);
+        
+    
+        var popup_09bfb910931a0daddfaca7cfc1507597 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_31b61034eba21527fbd41fe3d20ab657 = $(`<div id="html_31b61034eba21527fbd41fe3d20ab657" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 133791.61 kW/m<br>     <b>Depth:</b> 15.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Halifax<br>     <b>Waterbody:</b> Beaver Harbour<br>     <b>Station Name:</b> Beaver Harbour     </div>`)[0];
+                popup_09bfb910931a0daddfaca7cfc1507597.setContent(html_31b61034eba21527fbd41fe3d20ab657);
+            
+        
+
+        marker_6c3fc17e469f279fd44eba09d1378150.bindPopup(popup_09bfb910931a0daddfaca7cfc1507597)
+        ;
+
+        
+    
+    
+            var marker_96d3e4c59a4e05eb2560d7c4b4e8ce11 = L.marker(
+                [44.7376, -62.8092],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_660a752e0bfb7f9657d531b11706269f = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_96d3e4c59a4e05eb2560d7c4b4e8ce11.setIcon(icon_660a752e0bfb7f9657d531b11706269f);
+        
+    
+        var popup_e441b862dd8485c18453a596456b008f = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_799a3e2db1b0b61c7d036753664b0eb4 = $(`<div id="html_799a3e2db1b0b61c7d036753664b0eb4" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 196082.40 kW/m<br>     <b>Depth:</b> 8.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Halifax<br>     <b>Waterbody:</b> Owl's Head Bay<br>     <b>Station Name:</b> Owl's Head     </div>`)[0];
+                popup_e441b862dd8485c18453a596456b008f.setContent(html_799a3e2db1b0b61c7d036753664b0eb4);
+            
+        
+
+        marker_96d3e4c59a4e05eb2560d7c4b4e8ce11.bindPopup(popup_e441b862dd8485c18453a596456b008f)
+        ;
+
+        
+    
+    
+            var marker_bc3f56b6ae3e24816102d217a03c1b54 = L.marker(
+                [44.75179, -62.76327],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_347df94acdde61cabd2d3e5ade5ea91a = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_bc3f56b6ae3e24816102d217a03c1b54.setIcon(icon_347df94acdde61cabd2d3e5ade5ea91a);
+        
+    
+        var popup_749dc3f97911ad25d9f6679a7d721c2a = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_3530a426feaa435061434362adeecc7f = $(`<div id="html_3530a426feaa435061434362adeecc7f" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 269934.85 kW/m<br>     <b>Depth:</b> 10.5 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Halifax<br>     <b>Waterbody:</b> Ship Harbour<br>     <b>Station Name:</b> Wolfes Island     </div>`)[0];
+                popup_749dc3f97911ad25d9f6679a7d721c2a.setContent(html_3530a426feaa435061434362adeecc7f);
+            
+        
+
+        marker_bc3f56b6ae3e24816102d217a03c1b54.bindPopup(popup_749dc3f97911ad25d9f6679a7d721c2a)
+        ;
+
+        
+    
+    
+            var marker_13bae112126eff65e22fc9208f349d38 = L.marker(
+                [44.54113, -63.96929],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_27c4af54b017a862d6569e05dc4ec449 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_13bae112126eff65e22fc9208f349d38.setIcon(icon_27c4af54b017a862d6569e05dc4ec449);
+        
+    
+        var popup_54a9df9a87d287173ce6321f3a7939bc = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_dff287b25d5fc71a665d4558893cdc27 = $(`<div id="html_dff287b25d5fc71a665d4558893cdc27" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 390492.20 kW/m<br>     <b>Depth:</b> 45.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Halifax<br>     <b>Waterbody:</b> St. Margarets Bay<br>     <b>Station Name:</b> Shut In Island     </div>`)[0];
+                popup_54a9df9a87d287173ce6321f3a7939bc.setContent(html_dff287b25d5fc71a665d4558893cdc27);
+            
+        
+
+        marker_13bae112126eff65e22fc9208f349d38.bindPopup(popup_54a9df9a87d287173ce6321f3a7939bc)
+        ;
+
+        
+    
+    
+            var marker_e1afc6fc18c188f3e8aa37af5860cf71 = L.marker(
+                [44.83698, -62.47765],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_ae4c5ed06e9fd31b5eed5475812b9f6b = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_e1afc6fc18c188f3e8aa37af5860cf71.setIcon(icon_ae4c5ed06e9fd31b5eed5475812b9f6b);
+        
+    
+        var popup_6518b3c22f224b6a475118a21be04223 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_b3fa6ac477fecd7c5ea2fe4b4a371719 = $(`<div id="html_b3fa6ac477fecd7c5ea2fe4b4a371719" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 134723.25 kW/m<br>     <b>Depth:</b> 12.4 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Halifax<br>     <b>Waterbody:</b> Sheet Harbour<br>     <b>Station Name:</b> Sober Island Outlet     </div>`)[0];
+                popup_6518b3c22f224b6a475118a21be04223.setContent(html_b3fa6ac477fecd7c5ea2fe4b4a371719);
+            
+        
+
+        marker_e1afc6fc18c188f3e8aa37af5860cf71.bindPopup(popup_6518b3c22f224b6a475118a21be04223)
+        ;
+
+        
+    
+    
+            var marker_6644f25e921f82e28f0f2159a9c53acf = L.marker(
+                [44.8168, -62.6172],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_b06c92a141deb5e2d574b3ce42ef2459 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_6644f25e921f82e28f0f2159a9c53acf.setIcon(icon_b06c92a141deb5e2d574b3ce42ef2459);
+        
+    
+        var popup_34e6288827ef3337f94f914cec64da35 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_b91f3df2758153507c0e1c7687b5d961 = $(`<div id="html_b91f3df2758153507c0e1c7687b5d961" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 138025.17 kW/m<br>     <b>Depth:</b> 13.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Halifax<br>     <b>Waterbody:</b> Spry Harbour<br>     <b>Station Name:</b> Spry Harbour     </div>`)[0];
+                popup_34e6288827ef3337f94f914cec64da35.setContent(html_b91f3df2758153507c0e1c7687b5d961);
+            
+        
+
+        marker_6644f25e921f82e28f0f2159a9c53acf.bindPopup(popup_34e6288827ef3337f94f914cec64da35)
+        ;
+
+        
+    
+    
+            var marker_c1651d4b02a3af76a69e05140869d770 = L.marker(
+                [46.0002, -60.96485],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_3f6dcb0011b9bead0302ac64480e9f8c = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_c1651d4b02a3af76a69e05140869d770.setIcon(icon_3f6dcb0011b9bead0302ac64480e9f8c);
+        
+    
+        var popup_1c10befddb0278899da951fb0ba7fc8e = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_03812ce01ed1c17f062f8a20a834ea1a = $(`<div id="html_03812ce01ed1c17f062f8a20a834ea1a" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 344817.61 kW/m<br>     <b>Depth:</b> 17.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Inverness<br>     <b>Waterbody:</b> Whycocomagh Bay<br>     <b>Station Name:</b> Gypsum Mine     </div>`)[0];
+                popup_1c10befddb0278899da951fb0ba7fc8e.setContent(html_03812ce01ed1c17f062f8a20a834ea1a);
+            
+        
+
+        marker_c1651d4b02a3af76a69e05140869d770.bindPopup(popup_1c10befddb0278899da951fb0ba7fc8e)
+        ;
+
+        
+    
+    
+            var marker_279e6ac2ca96312c2852b301a0ae3d15 = L.marker(
+                [45.97827, -61.0251],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_ed09a0ed8fd243131eabcde0ff373c0f = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "orange", "prefix": "glyphicon"}
+            );
+            marker_279e6ac2ca96312c2852b301a0ae3d15.setIcon(icon_ed09a0ed8fd243131eabcde0ff373c0f);
+        
+    
+        var popup_95256ea3697057a955039f26c80e8e30 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_cfea7a9e7b8b4723574e9778a3a86e40 = $(`<div id="html_cfea7a9e7b8b4723574e9778a3a86e40" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> High Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 584392.31 kW/m<br>     <b>Depth:</b> nan m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Inverness<br>     <b>Waterbody:</b> Whycocomagh Bay<br>     <b>Station Name:</b> North Aberdeen     </div>`)[0];
+                popup_95256ea3697057a955039f26c80e8e30.setContent(html_cfea7a9e7b8b4723574e9778a3a86e40);
+            
+        
+
+        marker_279e6ac2ca96312c2852b301a0ae3d15.bindPopup(popup_95256ea3697057a955039f26c80e8e30)
+        ;
+
+        
+    
+    
+            var marker_201166abf05790451b1c6ec9fdff86af = L.marker(
+                [45.97742, -61.03027],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_7652b93dabb615f02cc51a83861ac267 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_201166abf05790451b1c6ec9fdff86af.setIcon(icon_7652b93dabb615f02cc51a83861ac267);
+        
+    
+        var popup_d103ec8f0d75de0f92b35a3e62e29299 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_52b5fd919078e7354838a4aa426a6c0f = $(`<div id="html_52b5fd919078e7354838a4aa426a6c0f" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 139089.22 kW/m<br>     <b>Depth:</b> 23.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Inverness<br>     <b>Waterbody:</b> Whycocomagh Bay<br>     <b>Station Name:</b> North Aberdeen     </div>`)[0];
+                popup_d103ec8f0d75de0f92b35a3e62e29299.setContent(html_52b5fd919078e7354838a4aa426a6c0f);
+            
+        
+
+        marker_201166abf05790451b1c6ec9fdff86af.bindPopup(popup_d103ec8f0d75de0f92b35a3e62e29299)
+        ;
+
+        
+    
+    
+            var marker_72d24d1713e78f079400d334105b7988 = L.marker(
+                [45.94661, -61.12931],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_611d85920a3f5d5184b43e56646e2a9a = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_72d24d1713e78f079400d334105b7988.setIcon(icon_611d85920a3f5d5184b43e56646e2a9a);
+        
+    
+        var popup_66b351b7928008efaf4d41a7d56fca53 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_8dddbab349ce7ce51f9eac1e9dedd060 = $(`<div id="html_8dddbab349ce7ce51f9eac1e9dedd060" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 166814.91 kW/m<br>     <b>Depth:</b> 28.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Inverness<br>     <b>Waterbody:</b> Whycocomagh Bay<br>     <b>Station Name:</b> Superlease     </div>`)[0];
+                popup_66b351b7928008efaf4d41a7d56fca53.setContent(html_8dddbab349ce7ce51f9eac1e9dedd060);
+            
+        
+
+        marker_72d24d1713e78f079400d334105b7988.bindPopup(popup_66b351b7928008efaf4d41a7d56fca53)
+        ;
+
+        
+    
+    
+            var marker_efe04d9c8e7614d4b7e9d1dbaa952003 = L.marker(
+                [44.51912, -64.16333],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_855f17933633f02b2d83c1662d3cae7a = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_efe04d9c8e7614d4b7e9d1dbaa952003.setIcon(icon_855f17933633f02b2d83c1662d3cae7a);
+        
+    
+        var popup_981bef694a70c73b87ee4fbb456d6b3a = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_cb385ba722ee8e05f793ec3dc6420bab = $(`<div id="html_cb385ba722ee8e05f793ec3dc6420bab" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 97045.18 kW/m<br>     <b>Depth:</b> 44.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Lunenburg<br>     <b>Waterbody:</b> Mahone Bay<br>     <b>Station Name:</b> Mahone Bay Centre     </div>`)[0];
+                popup_981bef694a70c73b87ee4fbb456d6b3a.setContent(html_cb385ba722ee8e05f793ec3dc6420bab);
+            
+        
+
+        marker_efe04d9c8e7614d4b7e9d1dbaa952003.bindPopup(popup_981bef694a70c73b87ee4fbb456d6b3a)
+        ;
+
+        
+    
+    
+            var marker_f1a3c6437578d8a7e65189b310b3908e = L.marker(
+                [44.525425, -63.9981],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_08b401f3b3ee6e1a9006dd2dc2a96205 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_f1a3c6437578d8a7e65189b310b3908e.setIcon(icon_08b401f3b3ee6e1a9006dd2dc2a96205);
+        
+    
+        var popup_4e46b7cb6cac1b9c64a8169fb6dffc3a = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_2338bf2b9622df4b45fe603273028375 = $(`<div id="html_2338bf2b9622df4b45fe603273028375" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 115702.49 kW/m<br>     <b>Depth:</b> nan m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Lunenburg<br>     <b>Waterbody:</b> St. Margarets Bay<br>     <b>Station Name:</b> St. Margarets Bay     </div>`)[0];
+                popup_4e46b7cb6cac1b9c64a8169fb6dffc3a.setContent(html_2338bf2b9622df4b45fe603273028375);
+            
+        
+
+        marker_f1a3c6437578d8a7e65189b310b3908e.bindPopup(popup_4e46b7cb6cac1b9c64a8169fb6dffc3a)
+        ;
+
+        
+    
+    
+            var marker_427f68de2d90c7614eb5cf7998608603 = L.marker(
+                [43.94512, -64.76457],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_3580cce164188dc51410e3524164a227 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "orange", "prefix": "glyphicon"}
+            );
+            marker_427f68de2d90c7614eb5cf7998608603.setIcon(icon_3580cce164188dc51410e3524164a227);
+        
+    
+        var popup_fcf5ad05864c1548f65177d64d55b34e = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_3aff73e02c6e15db0015a9a9f1ca25c7 = $(`<div id="html_3aff73e02c6e15db0015a9a9f1ca25c7" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> High Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 584576.69 kW/m<br>     <b>Depth:</b> 17.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Queens<br>     <b>Waterbody:</b> Port Mouton<br>     <b>Station Name:</b> Hunts Point     </div>`)[0];
+                popup_fcf5ad05864c1548f65177d64d55b34e.setContent(html_3aff73e02c6e15db0015a9a9f1ca25c7);
+            
+        
+
+        marker_427f68de2d90c7614eb5cf7998608603.bindPopup(popup_fcf5ad05864c1548f65177d64d55b34e)
+        ;
+
+        
+    
+    
+            var marker_3596b39666a0276925c2fb2b8a499ac8 = L.marker(
+                [44.041, -64.6414],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_cfdfd391cdcbe82630a3b7259b0d6d5e = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_3596b39666a0276925c2fb2b8a499ac8.setIcon(icon_cfdfd391cdcbe82630a3b7259b0d6d5e);
+        
+    
+        var popup_ae291009aa3ba8b0d275eea93ed098eb = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_4026a553169a6ad7502ef367cf910434 = $(`<div id="html_4026a553169a6ad7502ef367cf910434" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 310627.71 kW/m<br>     <b>Depth:</b> 16.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Queens<br>     <b>Waterbody:</b> Liverpool Bay<br>     <b>Station Name:</b> Coffin Island SW     </div>`)[0];
+                popup_ae291009aa3ba8b0d275eea93ed098eb.setContent(html_4026a553169a6ad7502ef367cf910434);
+            
+        
+
+        marker_3596b39666a0276925c2fb2b8a499ac8.bindPopup(popup_ae291009aa3ba8b0d275eea93ed098eb)
+        ;
+
+        
+    
+    
+            var marker_c680e5c16ab257dbda1b68471a891bbe = L.marker(
+                [43.91594, -64.81122],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_3957c80e5deebe7b79e69de8d82845d3 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_c680e5c16ab257dbda1b68471a891bbe.setIcon(icon_3957c80e5deebe7b79e69de8d82845d3);
+        
+    
+        var popup_0be7c79278ae7d0cf0c2e7c59857fc0e = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_0f5b757c2da53a5b98e9d22033f2329f = $(`<div id="html_0f5b757c2da53a5b98e9d22033f2329f" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 131502.88 kW/m<br>     <b>Depth:</b> 13.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Queens<br>     <b>Waterbody:</b> Port Mouton<br>     <b>Station Name:</b> Spectacle Island     </div>`)[0];
+                popup_0be7c79278ae7d0cf0c2e7c59857fc0e.setContent(html_0f5b757c2da53a5b98e9d22033f2329f);
+            
+        
+
+        marker_c680e5c16ab257dbda1b68471a891bbe.bindPopup(popup_0be7c79278ae7d0cf0c2e7c59857fc0e)
+        ;
+
+        
+    
+    
+            var marker_bb11476476f5cfeb99df1b208ada9c88 = L.marker(
+                [43.88513, -64.77979],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_ef0cc86a1b336b87311bbcb797117641 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_bb11476476f5cfeb99df1b208ada9c88.setIcon(icon_ef0cc86a1b336b87311bbcb797117641);
+        
+    
+        var popup_e997d2a799e5ac5f2f7791a5c3d6053d = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_cc3f7d22144f12fc5f7313806b4cd91f = $(`<div id="html_cc3f7d22144f12fc5f7313806b4cd91f" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 220799.29 kW/m<br>     <b>Depth:</b> 15.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Queens<br>     <b>Waterbody:</b> Port Mouton<br>     <b>Station Name:</b> Western Channel     </div>`)[0];
+                popup_e997d2a799e5ac5f2f7791a5c3d6053d.setContent(html_cc3f7d22144f12fc5f7313806b4cd91f);
+            
+        
+
+        marker_bb11476476f5cfeb99df1b208ada9c88.bindPopup(popup_e997d2a799e5ac5f2f7791a5c3d6053d)
+        ;
+
+        
+    
+    
+            var marker_893cd178babb6a14bbada17d8f06371e = L.marker(
+                [44.03825, -64.639367],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_9481cdbebefb679d27b288adbfbed791 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "orange", "prefix": "glyphicon"}
+            );
+            marker_893cd178babb6a14bbada17d8f06371e.setIcon(icon_9481cdbebefb679d27b288adbfbed791);
+        
+    
+        var popup_56c23deb2a6b68af3fce2f22e635a963 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_20140a8ccd85f1df413894975e00b079 = $(`<div id="html_20140a8ccd85f1df413894975e00b079" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> High Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 665301.32 kW/m<br>     <b>Depth:</b> nan m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Queens<br>     <b>Waterbody:</b> Liverpool Bay<br>     <b>Station Name:</b> Liverpool Bay     </div>`)[0];
+                popup_56c23deb2a6b68af3fce2f22e635a963.setContent(html_20140a8ccd85f1df413894975e00b079);
+            
+        
+
+        marker_893cd178babb6a14bbada17d8f06371e.bindPopup(popup_56c23deb2a6b68af3fce2f22e635a963)
+        ;
+
+        
+    
+    
+            var marker_68c166e885ce0d716589ea824c3e831a = L.marker(
+                [45.66188, -60.8468],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_36e834b885338bc853b6a737fb23cd75 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_68c166e885ce0d716589ea824c3e831a.setIcon(icon_36e834b885338bc853b6a737fb23cd75);
+        
+    
+        var popup_e8727f0c405807eb5833f09edae43213 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_a8edc7ee04e96d89cae5f8cbf397f753 = $(`<div id="html_a8edc7ee04e96d89cae5f8cbf397f753" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 153479.53 kW/m<br>     <b>Depth:</b> 10.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Richmond<br>     <b>Waterbody:</b> St. Peters Inlet<br>     <b>Station Name:</b> St. Peters Inlet     </div>`)[0];
+                popup_e8727f0c405807eb5833f09edae43213.setContent(html_a8edc7ee04e96d89cae5f8cbf397f753);
+            
+        
+
+        marker_68c166e885ce0d716589ea824c3e831a.bindPopup(popup_e8727f0c405807eb5833f09edae43213)
+        ;
+
+        
+    
+    
+            var marker_eb779b1ec570bb2bf49c9500ec91beb4 = L.marker(
+                [43.69695, -65.19517],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_26f05b7d5802742c854bf5dbd6700eff = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_eb779b1ec570bb2bf49c9500ec91beb4.setIcon(icon_26f05b7d5802742c854bf5dbd6700eff);
+        
+    
+        var popup_d523da00b1a5fa5d11942e8eda902730 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_bfc1381c0c9930b9f6560968766a147d = $(`<div id="html_bfc1381c0c9930b9f6560968766a147d" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 296708.76 kW/m<br>     <b>Depth:</b> 15.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Shelburne<br>     <b>Waterbody:</b> Jordan Bay<br>     <b>Station Name:</b> Blue Island     </div>`)[0];
+                popup_d523da00b1a5fa5d11942e8eda902730.setContent(html_bfc1381c0c9930b9f6560968766a147d);
+            
+        
+
+        marker_eb779b1ec570bb2bf49c9500ec91beb4.bindPopup(popup_d523da00b1a5fa5d11942e8eda902730)
+        ;
+
+        
+    
+    
+            var marker_299f114241df28b54f02ddee160801b2 = L.marker(
+                [43.73992, -65.32671],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_8341b2e5a337ab5214eaefee98fb4056 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "red", "prefix": "glyphicon"}
+            );
+            marker_299f114241df28b54f02ddee160801b2.setIcon(icon_8341b2e5a337ab5214eaefee98fb4056);
+        
+    
+        var popup_5492d8601a63706343b75ae28a2dd323 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_59b8362ad7a07a515bf339f27a27c3ce = $(`<div id="html_59b8362ad7a07a515bf339f27a27c3ce" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> High Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 394274.62 kW/m<br>     <b>Depth:</b> 14.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Shelburne<br>     <b>Waterbody:</b> Shelburne Harbour<br>     <b>Station Name:</b> Boston Rock     </div>`)[0];
+                popup_5492d8601a63706343b75ae28a2dd323.setContent(html_59b8362ad7a07a515bf339f27a27c3ce);
+            
+        
+
+        marker_299f114241df28b54f02ddee160801b2.bindPopup(popup_5492d8601a63706343b75ae28a2dd323)
+        ;
+
+        
+    
+    
+            var marker_77fbb3fffd11ba3cbb8ac621fc1db679 = L.marker(
+                [43.6407, -65.2654],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_bb97108c9b337736da15eec6dc3cc6a6 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "red", "prefix": "glyphicon"}
+            );
+            marker_77fbb3fffd11ba3cbb8ac621fc1db679.setIcon(icon_bb97108c9b337736da15eec6dc3cc6a6);
+        
+    
+        var popup_f99c9f7fd80f018f76d51d638f03c826 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_4a1ae7a23e26b35290ef0d6f580ffc72 = $(`<div id="html_4a1ae7a23e26b35290ef0d6f580ffc72" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> High Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 616091.70 kW/m<br>     <b>Depth:</b> 14.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Shelburne<br>     <b>Waterbody:</b> Shelburne Harbour<br>     <b>Station Name:</b> East McNutts     </div>`)[0];
+                popup_f99c9f7fd80f018f76d51d638f03c826.setContent(html_4a1ae7a23e26b35290ef0d6f580ffc72);
+            
+        
+
+        marker_77fbb3fffd11ba3cbb8ac621fc1db679.bindPopup(popup_f99c9f7fd80f018f76d51d638f03c826)
+        ;
+
+        
+    
+    
+            var marker_b5925da381cced5220fd2aff3a9cbeb4 = L.marker(
+                [43.6806, -65.2046],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_aa13c7fe2541c558b093778542f2561e = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_b5925da381cced5220fd2aff3a9cbeb4.setIcon(icon_aa13c7fe2541c558b093778542f2561e);
+        
+    
+        var popup_afec62f417414661903b8f7e1bd09169 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_55a5783387d5e2d96e6eecef9eeb903f = $(`<div id="html_55a5783387d5e2d96e6eecef9eeb903f" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 81779.51 kW/m<br>     <b>Depth:</b> 20.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Shelburne<br>     <b>Waterbody:</b> Jordan Bay<br>     <b>Station Name:</b> Jordan Bay     </div>`)[0];
+                popup_afec62f417414661903b8f7e1bd09169.setContent(html_55a5783387d5e2d96e6eecef9eeb903f);
+            
+        
+
+        marker_b5925da381cced5220fd2aff3a9cbeb4.bindPopup(popup_afec62f417414661903b8f7e1bd09169)
+        ;
+
+        
+    
+    
+            var marker_2a1e239d6509280c567015e2c4143e29 = L.marker(
+                [43.698722, -65.194333],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_a5457a5e2dd7bc9c10cfcdb80c2ff9c3 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_2a1e239d6509280c567015e2c4143e29.setIcon(icon_a5457a5e2dd7bc9c10cfcdb80c2ff9c3);
+        
+    
+        var popup_f9ae73d322b7eb80fba490f06062d234 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_a990bad42dd3e6133cd3d851d4db2b89 = $(`<div id="html_a990bad42dd3e6133cd3d851d4db2b89" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 199822.37 kW/m<br>     <b>Depth:</b> nan m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Shelburne<br>     <b>Waterbody:</b> Jordan Bay<br>     <b>Station Name:</b> Jordan Bay     </div>`)[0];
+                popup_f9ae73d322b7eb80fba490f06062d234.setContent(html_a990bad42dd3e6133cd3d851d4db2b89);
+            
+        
+
+        marker_2a1e239d6509280c567015e2c4143e29.bindPopup(popup_f9ae73d322b7eb80fba490f06062d234)
+        ;
+
+        
+    
+    
+            var marker_7616b5afcdb1f928e55081a99674bb58 = L.marker(
+                [46.2856, -60.5431],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_ca7dd1d11b4e91e8a2e996e4c26ffbef = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_7616b5afcdb1f928e55081a99674bb58.setIcon(icon_ca7dd1d11b4e91e8a2e996e4c26ffbef);
+        
+    
+        var popup_30012a2966a3a75feedf7b02a38a5d84 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_4394085283bf20a6f6e0d5b6e201969f = $(`<div id="html_4394085283bf20a6f6e0d5b6e201969f" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 286726.20 kW/m<br>     <b>Depth:</b> 15.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Victoria<br>     <b>Waterbody:</b> St. Ann's Harbour<br>     <b>Station Name:</b> Englishtown Wharf     </div>`)[0];
+                popup_30012a2966a3a75feedf7b02a38a5d84.setContent(html_4394085283bf20a6f6e0d5b6e201969f);
+            
+        
+
+        marker_7616b5afcdb1f928e55081a99674bb58.bindPopup(popup_30012a2966a3a75feedf7b02a38a5d84)
+        ;
+
+        
+    
+    
+            var marker_8077420787a498ad09006b1c1dd63a2c = L.marker(
+                [43.67469261, -65.82454],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_03354e909186d996bd2352ae5bf0b786 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_8077420787a498ad09006b1c1dd63a2c.setIcon(icon_03354e909186d996bd2352ae5bf0b786);
+        
+    
+        var popup_9b16fa69a8750c7b45984be018ae263d = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_a0febc40032cb8ca58d516d355fe2d63 = $(`<div id="html_a0febc40032cb8ca58d516d355fe2d63" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 287659.65 kW/m<br>     <b>Depth:</b> 13.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Yarmouth<br>     <b>Waterbody:</b> Lobster Bay<br>     <b>Station Name:</b> Canoe Island     </div>`)[0];
+                popup_9b16fa69a8750c7b45984be018ae263d.setContent(html_a0febc40032cb8ca58d516d355fe2d63);
+            
+        
+
+        marker_8077420787a498ad09006b1c1dd63a2c.bindPopup(popup_9b16fa69a8750c7b45984be018ae263d)
+        ;
+
+        
+    
+    
+            var marker_a125250df5e0e2f39f258634db61e54e = L.marker(
+                [43.62969, -65.82394],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_fb963899ae1bc4575572f6d6bfe432b7 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_a125250df5e0e2f39f258634db61e54e.setIcon(icon_fb963899ae1bc4575572f6d6bfe432b7);
+        
+    
+        var popup_bec492e52e2b9f11bf33a49e33e2bfc6 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_0dea2931d6f24ab0c54510ddf3da88c7 = $(`<div id="html_0dea2931d6f24ab0c54510ddf3da88c7" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 99120.03 kW/m<br>     <b>Depth:</b> 10.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Yarmouth<br>     <b>Waterbody:</b> Lobster Bay<br>     <b>Station Name:</b> The Brothers South     </div>`)[0];
+                popup_bec492e52e2b9f11bf33a49e33e2bfc6.setContent(html_0dea2931d6f24ab0c54510ddf3da88c7);
+            
+        
+
+        marker_a125250df5e0e2f39f258634db61e54e.bindPopup(popup_bec492e52e2b9f11bf33a49e33e2bfc6)
+        ;
+
+        
+    
+    
+            var marker_652939e9ba1c453bc14c2edb60cc45e8 = L.marker(
+                [43.70071, -65.83534],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_383defdb9e22780f3d3bd3b9b852340d = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "red", "prefix": "glyphicon"}
+            );
+            marker_652939e9ba1c453bc14c2edb60cc45e8.setIcon(icon_383defdb9e22780f3d3bd3b9b852340d);
+        
+    
+        var popup_0e23e68b7f142f8b50be5a91e83b622b = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_82367b533a63c3405a127a83ae9a42b1 = $(`<div id="html_82367b533a63c3405a127a83ae9a42b1" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> High Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 501484.62 kW/m<br>     <b>Depth:</b> 10.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Yarmouth<br>     <b>Waterbody:</b> Lobster Bay<br>     <b>Station Name:</b> Big Gooseberry Island     </div>`)[0];
+                popup_0e23e68b7f142f8b50be5a91e83b622b.setContent(html_82367b533a63c3405a127a83ae9a42b1);
+            
+        
+
+        marker_652939e9ba1c453bc14c2edb60cc45e8.bindPopup(popup_0e23e68b7f142f8b50be5a91e83b622b)
+        ;
+
+        
+    
+    
+            var marker_259a6725d3444f31be9ce3c890beab73 = L.marker(
+                [43.60661, -65.78314],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_56800abdff05cc0f061aef1b1d5a260b = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "orange", "prefix": "glyphicon"}
+            );
+            marker_259a6725d3444f31be9ce3c890beab73.setIcon(icon_56800abdff05cc0f061aef1b1d5a260b);
+        
+    
+        var popup_f7d6451e318e81ad84e42c28e02d05a5 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_efa10891120c7ec520e2be7fcf698750 = $(`<div id="html_efa10891120c7ec520e2be7fcf698750" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> High Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 515098.98 kW/m<br>     <b>Depth:</b> 15.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Yarmouth<br>     <b>Waterbody:</b> Pubnico Harbour<br>     <b>Station Name:</b> Pubnico     </div>`)[0];
+                popup_f7d6451e318e81ad84e42c28e02d05a5.setContent(html_efa10891120c7ec520e2be7fcf698750);
+            
+        
+
+        marker_259a6725d3444f31be9ce3c890beab73.bindPopup(popup_f7d6451e318e81ad84e42c28e02d05a5)
+        ;
+
+        
+    
+    
+            var marker_404a8c95811492724b5cabf41e7e1cee = L.marker(
+                [43.68486, -65.83658],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_436d401bff0dd5dcebeb5592a9ad8f01 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_404a8c95811492724b5cabf41e7e1cee.setIcon(icon_436d401bff0dd5dcebeb5592a9ad8f01);
+        
+    
+        var popup_8b5925b639f9268f88d8b2c939c2dbd6 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_e232db786dd2fb359acf3622d6e7e372 = $(`<div id="html_e232db786dd2fb359acf3622d6e7e372" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 196495.04 kW/m<br>     <b>Depth:</b> 11.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Yarmouth<br>     <b>Waterbody:</b> Lobster Bay<br>     <b>Station Name:</b> Ram Island S     </div>`)[0];
+                popup_8b5925b639f9268f88d8b2c939c2dbd6.setContent(html_e232db786dd2fb359acf3622d6e7e372);
+            
+        
+
+        marker_404a8c95811492724b5cabf41e7e1cee.bindPopup(popup_8b5925b639f9268f88d8b2c939c2dbd6)
+        ;
+
+        
+    
+    
+            var marker_bcc4bed8fc68303e33b31cb1ce853e78 = L.marker(
+                [43.49633, -65.73766],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_822096ac3892a5e3ac44709787ff7f40 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_bcc4bed8fc68303e33b31cb1ce853e78.setIcon(icon_822096ac3892a5e3ac44709787ff7f40);
+        
+    
+        var popup_5f02f7e886154a1d5d9c56c71879fdb1 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_47445ff22bd905f6359b5c7869c03013 = $(`<div id="html_47445ff22bd905f6359b5c7869c03013" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 94303.03 kW/m<br>     <b>Depth:</b> 17.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Yarmouth<br>     <b>Waterbody:</b> Woods Harbour<br>     <b>Station Name:</b> Outer Island     </div>`)[0];
+                popup_5f02f7e886154a1d5d9c56c71879fdb1.setContent(html_47445ff22bd905f6359b5c7869c03013);
+            
+        
+
+        marker_bcc4bed8fc68303e33b31cb1ce853e78.bindPopup(popup_5f02f7e886154a1d5d9c56c71879fdb1)
+        ;
+
+        
+    
+    
+            var marker_57a9d4e96b8e565b2c9c82708217705a = L.marker(
+                [43.46798, -65.73993],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_831178862527ce5578ac4c12b2f5f4e1 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_57a9d4e96b8e565b2c9c82708217705a.setIcon(icon_831178862527ce5578ac4c12b2f5f4e1);
+        
+    
+        var popup_e7e0446aaf9e9e6c70e4298310187f75 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_02b710965cd5a0d4665d401569d023cf = $(`<div id="html_02b710965cd5a0d4665d401569d023cf" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Shallow Depth<br>     <b>Wave Energy Potential:</b> 137764.49 kW/m<br>     <b>Depth:</b> 10.0 m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Yarmouth<br>     <b>Waterbody:</b> Woods Harbour<br>     <b>Station Name:</b> 1181     </div>`)[0];
+                popup_e7e0446aaf9e9e6c70e4298310187f75.setContent(html_02b710965cd5a0d4665d401569d023cf);
+            
+        
+
+        marker_57a9d4e96b8e565b2c9c82708217705a.bindPopup(popup_e7e0446aaf9e9e6c70e4298310187f75)
+        ;
+
+        
+    
+    
+            var marker_bba02774a0bcb5f09d46540395359dcd = L.marker(
+                [43.653275, -65.822797],
+                {}
+            ).addTo(marker_cluster_69022e9cb687d472e76ef88d671731a1);
+        
+    
+            var icon_4fcfc0f671542231b035e82123bf87c2 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "blue", "prefix": "glyphicon"}
+            );
+            marker_bba02774a0bcb5f09d46540395359dcd.setIcon(icon_4fcfc0f671542231b035e82123bf87c2);
+        
+    
+        var popup_e2fcdbe418e8b95194a90e8bad5b3cec = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_f87f1aad1fcd500ee8323d6cc40dfcfd = $(`<div id="html_f87f1aad1fcd500ee8323d6cc40dfcfd" style="width: 100.0%; height: 100.0%;">     <b>Category:</b> Low Energy, Deep Depth<br>     <b>Wave Energy Potential:</b> 84109.14 kW/m<br>     <b>Depth:</b> nan m<br>     <b>Species Count:</b> 10<br>     <b>Top Species:</b> Scomber scombrus, Pennatula, Methylophilaceae<br>     <b>County:</b> Yarmouth<br>     <b>Waterbody:</b> Lobster Bay<br>     <b>Station Name:</b> Lobster Bay     </div>`)[0];
+                popup_e2fcdbe418e8b95194a90e8bad5b3cec.setContent(html_f87f1aad1fcd500ee8323d6cc40dfcfd);
+            
+        
+
+        marker_bba02774a0bcb5f09d46540395359dcd.bindPopup(popup_e2fcdbe418e8b95194a90e8bad5b3cec)
+        ;
+
+        
+    
+    
+            marker_cluster_69022e9cb687d472e76ef88d671731a1.addTo(map_38a8fdcb7a5c1c2fbc316cd7c83a9c4d);
+        
+</script>
+</html>
