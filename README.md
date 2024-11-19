@@ -1,4 +1,4 @@
-# Marine Synergy: Mapping Wave Energy and Biodiversity in Nova Scotia
+# 🌊 Marine Synergy: Mapping Wave Energy and Biodiversity in Nova Scotia
 
 An interactive map visualizing wave energy potential and biodiversity in Nova Scotia, integrating datasets from Nova Scotia Open Data and OBIS. This project aims to provide actionable insights for marine energy research and biodiversity conservation.
 
@@ -16,6 +16,7 @@ An interactive map visualizing wave energy potential and biodiversity in Nova Sc
 - **`WaveEnergy&Biodiversity.ipynb`**: Jupyter Notebook for data processing, analysis, and visualization.
 - **`index.html`**: Generated interactive map for deployment on GitHub Pages or other hosting platforms.
 - **`Station_Location_Wave_Dataset_20241113.csv`**: Dataset containing wave station data.
+- **`Second Dataset`**: Biodiversity data retrieved dynamically from the OBIS API- https://obis.org/data/access/# 
 - **`README.md`**: This file!
 
 ---
