@@ -2,6 +2,7 @@
 
 An interactive map visualizing wave energy potential and biodiversity in Nova Scotia, integrating datasets from Nova Scotia Open Data and OBIS. This project aims to provide actionable insights for marine energy research and biodiversity conservation.
 
+# 🌐 Visualization: https://kavyabhojani.github.io/wave-energy-biodiversity-visualization/
 ---
 
 ## 🌟 Features
